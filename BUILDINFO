@@ -427,7 +427,7 @@
         "affectsGlobalScope": false
       },
       "./src/index.ts": {
-        "version": "f7b62e13d12fa0cebdf7f28df149e50f41802c279e6a9b1dfc12388d065ea769",
+        "version": "06da288760fbe49651af8c7306030b079dac24147c08dbb6e2aa9d6480b68c07",
         "signature": "00316e779bb16e52d58ebe243051bc85fe123e66577a482f57c290a6f2e1a779",
         "affectsGlobalScope": false
       },
@@ -439,6 +439,11 @@
       "./types/createoptions.d.ts": {
         "version": "0609668faeff3350bcb205ece0c092bccd0ce440f928f4118760729e98b25731",
         "signature": "0609668faeff3350bcb205ece0c092bccd0ce440f928f4118760729e98b25731",
+        "affectsGlobalScope": true
+      },
+      "./types/deleteoptions.d.ts": {
+        "version": "2ef37203987f88a5fa1f39e2543427caf5a01400f14df51a44cb19e07659567d",
+        "signature": "2ef37203987f88a5fa1f39e2543427caf5a01400f14df51a44cb19e07659567d",
         "affectsGlobalScope": true
       },
       "./types/logger.d.ts": {
@@ -457,8 +462,8 @@
         "affectsGlobalScope": true
       },
       "./types/selectoptions.d.ts": {
-        "version": "d289f5f512d4f9427465adc741941b7995dfc487d99dcb93f7950f5da3e499cf",
-        "signature": "d289f5f512d4f9427465adc741941b7995dfc487d99dcb93f7950f5da3e499cf",
+        "version": "7aa7078fe0c28e1d284351dd47570b6a9c31afa9d15e45efe0d8224317a3c45e",
+        "signature": "7aa7078fe0c28e1d284351dd47570b6a9c31afa9d15e45efe0d8224317a3c45e",
         "affectsGlobalScope": true
       },
       "./types/updateoptions.d.ts": {
@@ -1280,6 +1285,14 @@
         "./node_modules/@types/node/util.d.ts"
       ],
       "./types/createoptions.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/process.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/process.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "./types/deleteoptions.d.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/process.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2123,6 +2136,14 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
+      "./types/deleteoptions.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/process.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/process.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
       "./types/logger.d.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/process.d.ts",
@@ -2261,6 +2282,7 @@
       "./src/index.ts",
       "./types/checkexists.d.ts",
       "./types/createoptions.d.ts",
+      "./types/deleteoptions.d.ts",
       "./types/logger.d.ts",
       "./types/mysqltoolscallback.d.ts",
       "./types/pair.d.ts",
