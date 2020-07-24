@@ -294,6 +294,37 @@ class MySQLTools {
     }
   }
 
+  public delete(table:string,any: MySQLToolsCallback | deleteOptions,cb:MySQLToolsCallback){
+    if(this.pool){
+      if(table){
+        let sql:string = `delete from ${table}`;
+        if(typeof any === 'object'){
+          if (any.where?.main) {
+            sql += ' ';
+            let key: string = Object.keys(any.where!.main)[0];
+            let value: string | number = any.where?.main[key];
+            typeof value === 'number' ? sql += `${key}=${value}` : `${key}='${value}'`;
+          }
+          if (any.where?.main && any.where?.ands) {
+            let keys = Object.keys(any.where.ands);
+            for (let i = 0; i < keys.length; i++) {
+              typeof any.where.ands[i][keys[i]] === 'number' ? sql += ` and ${keys[i]}=${any.where.ands[i][keys[i]]}` : sql += ` and ${keys[i]}='${any.where.ands[i][keys[i]]}'`;
+            }
+          }
+        }
+        if(typeof any === 'function' || typeof cb === 'function'){
+          return this.doSql(sql,cb || any);  
+        }else{
+          return this.doSql(sql);
+        }
+      }else{
+        throw new ReferenceError('please input table name');
+      }
+    }else{
+      throw new ReferenceError('please config first');
+    }
+  }
+
   /**
    * drop
    * @param type 

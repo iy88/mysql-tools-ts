@@ -1,6 +1,6 @@
 interface where {
-  main: pair,
-  ands: pair[]
+  main?: pair,
+  ands?: pair[]
 }
 
 interface limit {
@@ -9,5 +9,5 @@ interface limit {
 }
 declare interface selectOptions {
   where?: where,
-  limit: limit
+  limit?: limit
 }
