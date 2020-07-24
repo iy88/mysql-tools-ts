@@ -294,6 +294,12 @@ class MySQLTools {
     }
   }
 
+  /**
+   * delete
+   * @param table 
+   * @param any 
+   * @param cb 
+   */
   public delete(table:string,any: MySQLToolsCallback | deleteOptions,cb:MySQLToolsCallback){
     if(this.pool){
       if(table){
