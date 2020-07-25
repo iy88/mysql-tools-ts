@@ -1,0 +1,13 @@
+name: tsc
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install and Build
+      run: |
+        yarn install
+        yarn build
