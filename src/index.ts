@@ -369,7 +369,7 @@ class MySQLTools {
    * @param name 
    * @param cb 
    */
-  public truncate(type:string, name:string, cb:MySQLToolsCallback) {
+  public truncate(type:string, name:string, cb?:MySQLToolsCallback) {
     if (type) {
       if (name) {
         let sql = `truncate ${type} ${name}`;
