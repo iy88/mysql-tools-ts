@@ -1,5 +1,6 @@
-import { default as mysql, MysqlError, Connection } from 'mysql';
+import { default as mysql, MysqlError } from 'mysql';
 import { ConnectionOptions, Pool } from "mysql";
+import { mysqlConnection } from '../types/mysqlConnection';
 import { MySQLToolsCallback } from '../types/MySQLToolsCallback';
 
 /**
@@ -75,16 +76,17 @@ class MySQLTools {
   public doSql(sql: string, cb?: MySQLToolsCallback) {
     if (this.pool) {
       if (cb) {
-        this.pool.getConnection((getConnectionError: MysqlError, connection: Connection) => {
+        this.pool.getConnection((getConnectionError: MysqlError, connection: mysqlConnection) => {
           getConnectionError ? cb(getConnectionError) : '';
           if (this.logger) {
             this.logger(mysql.format(sql, []));
           }
           connection.query(mysql.format(sql, []), cb);
+          connection.release();
         })
       } else {
         this.__promise__ = new Promise((resolve: any, reject: any) => {
-          this.pool.getConnection((getConnectionError: MysqlError, connection: Connection) => {
+          this.pool.getConnection((getConnectionError: MysqlError, connection: mysqlConnection) => {
             getConnectionError ? reject(getConnectionError) : '';
             if (this.logger) {
               this.logger(mysql.format(sql, []));
@@ -92,6 +94,7 @@ class MySQLTools {
             connection.query(mysql.format(sql, []), (queryError, results, fields) => {
               resolve({ error: queryError, results, fields })
             });
+            connection.release();
           })
         })
       }
@@ -179,9 +182,11 @@ class MySQLTools {
               typeof value === 'number' ? sql += `${key}=${value}` : `${key}='${value}'`;
             }
             if (any.where?.main && any.where?.ands) {
-              let keys = Object.keys(any.where.ands);
-              for (let i = 0; i < keys.length; i++) {
-                typeof any.where.ands[i][keys[i]] === 'number' ? sql += ` and ${keys[i]}=${any.where.ands[i][keys[i]]}` : sql += ` and ${keys[i]}='${any.where.ands[i][keys[i]]}'`;
+              let pairs = any.where.ands;
+              for (let i = 0; i < pairs.length; i++) {
+                let key:string = Object.keys(pairs[i])[0];
+                let value = pairs[i][key];
+                typeof value === 'number' ? sql += ` and ${key}=${value}` : sql += ` and ${key}='${value}'`;
               }
             }
             if (any.limit && any.limit.start) {
@@ -212,7 +217,7 @@ class MySQLTools {
    * @param pairs 
    * @param cb 
    */
-  public insert(table:string, pairs:pairs, cb:MySQLToolsCallback) {
+  public insert(table: string, pairs: pairs, cb: MySQLToolsCallback) {
     if (this.pool) {
       if (table) {
         if (pairs) {
@@ -235,7 +240,6 @@ class MySQLTools {
       } else {
         throw new Error('please input table name');
       }
-
     } else {
       throw new Error('please config first');
     }
@@ -300,11 +304,11 @@ class MySQLTools {
    * @param any 
    * @param cb 
    */
-  public delete(table:string,any: MySQLToolsCallback | deleteOptions,cb:MySQLToolsCallback){
-    if(this.pool){
-      if(table){
-        let sql:string = `delete from ${table}`;
-        if(typeof any === 'object'){
+  public delete(table: string, any: MySQLToolsCallback | deleteOptions, cb: MySQLToolsCallback) {
+    if (this.pool) {
+      if (table) {
+        let sql: string = `delete from ${table}`;
+        if (typeof any === 'object') {
           if (any.where?.main) {
             sql += ' ';
             let key: string = Object.keys(any.where!.main)[0];
@@ -318,15 +322,15 @@ class MySQLTools {
             }
           }
         }
-        if(typeof any === 'function' || typeof cb === 'function'){
-          return this.doSql(sql,cb || any);  
-        }else{
+        if (typeof any === 'function' || typeof cb === 'function') {
+          return this.doSql(sql, cb || any);
+        } else {
           return this.doSql(sql);
         }
-      }else{
+      } else {
         throw new ReferenceError('please input table name');
       }
-    }else{
+    } else {
       throw new ReferenceError('please config first');
     }
   }
@@ -338,7 +342,7 @@ class MySQLTools {
    * @param any 
    * @param cb 
    */
-  public drop(type:string, name:string, any:checkExists | MySQLToolsCallback, cb:MySQLToolsCallback) {
+  public drop(type: string, name: string, any: checkExists | MySQLToolsCallback, cb: MySQLToolsCallback) {
     if (this.pool) {
       if (type === 'database' || type === 'table') {
         if (name) {
@@ -369,7 +373,7 @@ class MySQLTools {
    * @param name 
    * @param cb 
    */
-  public truncate(type:string, name:string, cb?:MySQLToolsCallback) {
+  public truncate(type: string, name: string, cb?: MySQLToolsCallback) {
     if (type) {
       if (name) {
         let sql = `truncate ${type} ${name}`;
