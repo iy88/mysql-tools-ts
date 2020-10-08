@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc && uglifyjs dist/src/index.js -o dist/src/index.min.js"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,7 @@
     "@types/mysql": "^2.15.15",
     "@types/node": "^14.6.0",
     "mysql": "^2.18.1",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "uglifyjs": "^2.4.11"
   }
 }
