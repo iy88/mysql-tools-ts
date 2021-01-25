@@ -179,7 +179,7 @@ class MySQLTools {
               sql += ' ';
               let key: string = Object.keys(any.where!.main)[0];
               let value: string | number = any.where?.main[key];
-              typeof value === 'number' ? sql += `${key}=${value}` : `${key}='${value}'`;
+              typeof value === 'number' ? sql += `${key}=${value}` : sql += `${key}='${value}'`;
             }
             if (any.where?.main && any.where?.ands) {
               let pairs = any.where.ands;
