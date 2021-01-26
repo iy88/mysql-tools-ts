@@ -2,7 +2,7 @@
  * @Author: iy88 
  * @Date: 2021-01-25 22:37:51 
  * @Last Modified by: iy88
- * @Last Modified time: 2021-01-26 17:36:01
+ * @Last Modified time: 2021-01-26 18:16:30
  */
 import { default as mysql, MysqlError } from 'mysql';
 import { ConnectionOptions, Pool } from "mysql";
@@ -180,7 +180,7 @@ class MySQLTools {
   public select(columns: string | string[], table: string, any?: selectOptions | MySQLToolsCallback, cb?: MySQLToolsCallback) {
     if (this.pool) {
       if (this.config!.database || this.db) {
-        if (typeof any === 'object') {
+        if (typeof any === 'object') { 
           let sql: string = selectGenerator(columns, table, any?.where, any?.orderBy, any?.limit);
           if (cb) {
             return this.doSql(sql, cb);
