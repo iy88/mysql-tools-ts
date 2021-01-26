@@ -1,8 +1,14 @@
+/*
+ * @Author: iy88 
+ * @Date: 2021-01-25 22:37:51 
+ * @Last Modified by: iy88
+ * @Last Modified time: 2021-01-26 17:36:01
+ */
 import { default as mysql, MysqlError } from 'mysql';
 import { ConnectionOptions, Pool } from "mysql";
 import { mysqlConnection } from '../types/mysqlConnection';
 import { MySQLToolsCallback } from '../types/MySQLToolsCallback';
-
+import selectGenerator from "./sql-generators/select";
 /**
  * @constructor MySQLTools
  */
@@ -81,8 +87,10 @@ class MySQLTools {
           if (this.logger) {
             this.logger(mysql.format(sql, []));
           }
-          connection.query(mysql.format(sql, []), cb);
-          connection.release();
+          connection.query(mysql.format(sql, []), (error, results, fields) => {
+            cb(error, results, fields);
+            connection.release();
+          });
         })
       } else {
         this.__promise__ = new Promise((resolve: any, reject: any) => {
@@ -92,9 +100,9 @@ class MySQLTools {
               this.logger(mysql.format(sql, []));
             }
             connection.query(mysql.format(sql, []), (queryError, results, fields) => {
-              resolve({ error: queryError, results, fields })
+              resolve({ error: queryError, results, fields });
+              connection.release();
             });
-            connection.release();
           })
         })
       }
@@ -164,44 +172,28 @@ class MySQLTools {
 
   /**
    * select
-   * @param exp 
+   * @param columns columns (string | array) 
    * @param table table name 
    * @param any where and limit or callback function 
    * @param cb callback function
    */
-  public select(exp: string, table: string, any?: selectOptions | MySQLToolsCallback, cb?: MySQLToolsCallback) {
+  public select(columns: string | string[], table: string, any?: selectOptions | MySQLToolsCallback, cb?: MySQLToolsCallback) {
     if (this.pool) {
       if (this.config!.database || this.db) {
-        if (exp && table) {
-          let sql: string = `select ${exp} from ${this.db ? this.db + '.' + table : table}`;
-          if (any && typeof any === 'object') {
-            if (any.where?.main) {
-              sql += ' ';
-              let key: string = Object.keys(any.where!.main)[0];
-              let value: string | number = any.where?.main[key];
-              typeof value === 'number' ? sql += `${key}=${value}` : sql += `${key}='${value}'`;
-            }
-            if (any.where?.main && any.where?.ands) {
-              let pairs = any.where.ands;
-              for (let i = 0; i < pairs.length; i++) {
-                let key:string = Object.keys(pairs[i])[0];
-                let value = pairs[i][key];
-                typeof value === 'number' ? sql += ` and ${key}=${value}` : sql += ` and ${key}='${value}'`;
-              }
-            }
-            if (any.limit && any.limit.start) {
-              sql = `${sql} limit ${any.limit.start} ${any.limit.end ? ',' + any.limit.end : ''}`;
-            }
-          } else if (typeof any === 'string') {
-            sql += ' ' + any;
-          }
-          if (any && typeof any === 'function' || typeof cb === 'function') {
-            return this.doSql(sql, cb || <MySQLToolsCallback>any);
+        if (typeof any === 'object') {
+          let sql: string = selectGenerator(columns, table, any?.where, any?.orderBy, any?.limit);
+          if (cb) {
+            return this.doSql(sql, cb);
           } else {
             return this.doSql(sql);
           }
-        } else {
-          throw new Error('param lost');
+        } else if (typeof any === 'function') {
+          let sql: string = selectGenerator(columns, table);
+          return this.doSql(sql, any);
+        }
+        if (cb) {
+          let sql: string = selectGenerator(columns, table, (any as selectOptions | undefined)?.where, (any as selectOptions | undefined)?.orderBy, (any as selectOptions | undefined)?.limit);
+          return this.doSql(sql, cb);
         }
       } else {
         throw new Error('database not config');
@@ -275,7 +267,7 @@ class MySQLTools {
               }
             }
             if (any.ands && any.or) {
-              let key: string = any.or.keys()[0];
+              let key: string = Object.keys(any.or)[0];
               let o: pair = any.or;
               typeof o[key] === 'number' ? sql += ` or ${key}=${o[key]}` : sql += ` or ${key}='${o[key]}'`;
             }
