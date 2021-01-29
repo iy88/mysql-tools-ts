@@ -6,8 +6,8 @@
  */
 import { default as mysql, MysqlError } from 'mysql';
 import { ConnectionOptions, Pool } from "mysql";
-import { mysqlConnection } from '../types/mysqlConnection';
-import { MySQLToolsCallback } from '../types/MySQLToolsCallback';
+import { mysqlConnection } from './types/mysqlConnection';
+import { MySQLToolsCallback } from './types/MySQLToolsCallback';
 import selectGenerator from "./sql-generators/select";
 /**
  * @constructor MySQLTools

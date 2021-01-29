@@ -4,9 +4,6 @@
  * @Last Modified by: iy88
  * @Last Modified time: 2021-01-26 18:03:22
  */
-interface pair {
-  [key: string]: string | number
-}
 /**
  * select sql generator
  * @param columns 
